@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Galaxia de Mensajes 🌻</title>
     <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Dancing+Script:wght@700&display=swap');
+  /* Cambiamos a fuentes más legibles y elegantes */
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;800&family=Poppins:wght@400;600&display=swap');
 
   :root {
     --gold: #FFD700;
     --amber: #FFA500;
-    --bg: #050200;
+    --bg-dark: #0a0500;
+    --glass: rgba(0, 0, 0, 0.85); /* Fondo más oscuro para que la letra resalte */
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -19,48 +21,52 @@
     background: radial-gradient(circle at center, #1a0a00 0%, #000000 100%);
     min-height: 100vh;
     overflow: hidden;
-    font-family: 'Dancing Script', cursive;
-    color: var(--gold);
+    font-family: 'Poppins', sans-serif; /* Fuente base limpia */
+    color: white;
   }
 
-  /* --- PANEL DE MENSAJES (ARRIBA) --- */
+  /* --- PANEL DE MENSAJES (MÁS LEGIBLE) --- */
   #message-board {
     position: fixed;
-    top: 20px;
+    top: 30px;
     left: 50%;
     transform: translateX(-50%);
-    width: 90%;
-    max-width: 600px;
-    min-height: 80px;
-    background: rgba(255, 215, 0, 0.1);
-    backdrop-filter: blur(10px);
+    width: 85%;
+    max-width: 650px;
+    min-height: 100px;
+    background: var(--glass); /* Fondo negro sólido para contraste */
     border: 2px solid var(--gold);
-    border-radius: 15px;
+    border-radius: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 15px;
-    font-size: clamp(1.2rem, 4vw, 1.8rem);
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+    padding: 20px;
+    /* Fuente Playfair para el mensaje: Elegante pero Clara */
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.3rem, 5vw, 2rem); 
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--gold);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(255, 215, 0, 0.2);
     z-index: 1000;
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.4s ease;
   }
 
   .message-active {
-    animation: slideDown 0.5s ease-out;
-    text-shadow: 0 0 10px var(--gold);
+    animation: fadeInScale 0.6s ease-out forwards;
+    display: block;
   }
 
-  @keyframes slideDown {
-    0% { opacity: 0; transform: translateY(-20px); }
-    100% { opacity: 1; transform: translateY(0); }
+  @keyframes fadeInScale {
+    0% { opacity: 0; transform: scale(0.9); filter: blur(5px); }
+    100% { opacity: 1; transform: scale(1); filter: blur(0); }
   }
 
   /* --- GALAXIA --- */
   .galaxy {
     position: fixed;
-    top: 60%;
+    top: 55%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 100%;
@@ -81,36 +87,45 @@
   .flower-wrap {
     position: absolute;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease;
+  }
+
+  .flower-wrap:hover {
+    transform: scale(1.2);
   }
 
   /* --- EFECTO EXPLOSIÓN --- */
   .exploding {
-    animation: explode 0.5s forwards;
+    animation: explode 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     pointer-events: none;
   }
 
   @keyframes explode {
     0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(2); filter: brightness(2); opacity: 0.5; }
+    40% { transform: scale(2.5); filter: brightness(2) contrast(1.5); opacity: 0.8; }
     100% { transform: scale(0); opacity: 0; }
   }
 
   .particle {
     position: fixed;
-    width: 8px; height: 8px;
+    width: 6px; height: 6px;
     background: var(--gold);
     border-radius: 50%;
     pointer-events: none;
     z-index: 500;
+    box-shadow: 0 0 10px var(--gold);
   }
 
+  /* Contador */
   .counter {
     position: fixed;
     bottom: 20px;
-    right: 20px;
-    font-size: 1.2rem;
-    opacity: 0.7;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.9rem;
+    color: rgba(255, 215, 0, 0.6);
+    letter-spacing: 2px;
+    text-transform: uppercase;
   }
 
 </style>
@@ -119,7 +134,7 @@
 
     <div id="message-board">Toca una flor para revelar un secreto... 🌻</div>
     <div class="galaxy" id="galaxy"></div>
-    <div class="counter" id="counter">Flores restantes: 0</div>
+    <div class="counter" id="counter">Cargando Galaxia...</div>
 
     <script>
 const galaxy = document.getElementById('galaxy');
@@ -134,26 +149,30 @@ const phrases = [
   "A tu lado el mundo es mejor 🌍", "Eres mi sueño hecho realidad ✨",
   "Gracias por existir, amor 💖", "Eres mi lugar favorito en el mundo 🏠",
   "Tu amor es mi motor 🚀", "Eres la flor más bella del jardín 🌸",
-  "Sin ti nada sería igual 💍", "Te amo hasta el infinito 🚀🌌"
+  "Te amo hasta el infinito 💍", "Cada día a tu lado es un regalo 🎁",
+  "Eres mi calma en la tormenta 🌊", "Tu risa es mi canción favorita 🎶"
 ];
 
 let remaining = phrases.length;
-counterEl.innerText = `Flores restantes: ${remaining}`;
+updateCounter();
+
+function updateCounter() {
+  counterEl.innerText = `Quedan ${remaining} flores por descubrir`;
+}
 
 function createFlowerSVG(size) {
-  return `<svg width="${size}" height="${size}" viewBox="0 0 100 100">
-    <circle cx="50" cy="50" r="15" fill="#4B2C20" />
+  return `<svg width="${size}" height="${size}" viewBox="0 0 100 100" style="filter: drop-shadow(0 0 5px rgba(255,215,0,0.5))">
+    <circle cx="50" cy="50" r="15" fill="#3E1F00" />
     ${Array.from({length: 10}, (_, i) => `
-      <ellipse cx="50" cy="20" rx="10" ry="20" fill="#FFD700" transform="rotate(${i*36} 50 50)" />
+      <ellipse cx="50" cy="20" rx="10" ry="22" fill="#FFD700" transform="rotate(${i*36} 50 50)" />
     `).join('')}
   </svg>`;
 }
 
-// Configuración de órbitas responsivas
 const config = [
-  { r: 15, count: 4, speed: 25 },
-  { r: 30, count: 6, speed: 40 },
-  { r: 45, count: 6, speed: 55 }
+  { r: 18, count: 4, speed: 25 },
+  { r: 32, count: 6, speed: 40 },
+  { r: 48, count: 8, speed: 55 }
 ];
 
 config.forEach(orb => {
@@ -166,29 +185,28 @@ config.forEach(orb => {
     const wrap = document.createElement('div');
     wrap.className = 'flower-wrap';
     
-    // Posición dinámica usando VW para que sea responsivo
+    // Posicionamiento responsivo basado en ancho de pantalla
     wrap.style.left = (Math.cos(angle) * orb.r) + 'vw';
     wrap.style.top = (Math.sin(angle) * orb.r) + 'vw';
     
-    wrap.innerHTML = createFlowerSVG(40 + Math.random()*20);
+    wrap.innerHTML = createFlowerSVG(45 + Math.random()*15);
     
     wrap.onclick = (e) => {
       if(wrap.classList.contains('exploding')) return;
       
-      // 1. Mostrar mensaje arriba
-      const msg = phrases.pop() || "¡Me quedé sin palabras de tanto amarte! 💛";
+      const msg = phrases.pop() || "¡Eres el amor de mi vida! 👑💛";
       board.innerHTML = `<span class="message-active">${msg}</span>`;
-      board.style.borderColor = "#FFF";
-      setTimeout(() => board.style.borderColor = "var(--gold)", 500);
-
-      // 2. Efecto explosión
+      
       wrap.classList.add('exploding');
       createParticles(e.clientX, e.clientY);
       
-      // 3. Actualizar contador
       remaining = Math.max(0, remaining - 1);
-      counterEl.innerText = `Flores restantes: ${remaining}`;
-      if(remaining === 0) board.innerHTML = "¡Has recolectado todo mi amor! 🌻👑";
+      updateCounter();
+      if(remaining === 0) {
+        setTimeout(() => {
+          board.innerHTML = "<span class='message-active'>✨ ¡Has recolectado todo mi amor! Eres mi universo entero. ✨</span>";
+        }, 1000);
+      }
     };
     
     container.appendChild(wrap);
@@ -197,21 +215,21 @@ config.forEach(orb => {
 });
 
 function createParticles(x, y) {
-  for(let i=0; i<15; i++) {
+  for(let i=0; i<20; i++) {
     const p = document.createElement('div');
     p.className = 'particle';
     p.style.left = x + 'px';
     p.style.top = y + 'px';
-    const destX = (Math.random() - 0.5) * 200;
-    const destY = (Math.random() - 0.5) * 200;
+    const destX = (Math.random() - 0.5) * 300;
+    const destY = (Math.random() - 0.5) * 300;
     
     p.animate([
       { transform: 'translate(0, 0) scale(1)', opacity: 1 },
       { transform: `translate(${destX}px, ${destY}px) scale(0)`, opacity: 0 }
-    ], { duration: 1000, easing: 'ease-out' });
+    ], { duration: 1200, easing: 'ease-out' });
     
     document.body.appendChild(p);
-    setTimeout(() => p.remove(), 1000);
+    setTimeout(() => p.remove(), 1200);
   }
 }
 </script>
