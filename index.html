@@ -3,14 +3,14 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galaxia de Flores para Ti 🌻</title>
+    <title>Galaxia de Mensajes 🌻</title>
     <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Dancing+Script:wght@700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Dancing+Script:wght@700&display=swap');
 
   :root {
     --gold: #FFD700;
     --amber: #FFA500;
-    --deep: #0a0500;
+    --bg: #050200;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -20,59 +20,57 @@
     min-height: 100vh;
     overflow: hidden;
     font-family: 'Dancing Script', cursive;
-    /* Evitamos el cursor none en móviles para mejor UX */
+    color: var(--gold);
   }
 
-  @media (min-width: 768px) {
-    body { cursor: none; }
-  }
-
-  /* Custom cursor - Solo visible en desktop */
-  .cursor {
+  /* --- PANEL DE MENSAJES (ARRIBA) --- */
+  #message-board {
     position: fixed;
-    width: 20px; height: 20px;
-    background: radial-gradient(circle, var(--gold), var(--amber));
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 9999;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 0 15px var(--gold);
-    display: none;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 600px;
+    min-height: 80px;
+    background: rgba(255, 215, 0, 0.1);
+    backdrop-filter: blur(10px);
+    border: 2px solid var(--gold);
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 15px;
+    font-size: clamp(1.2rem, 4vw, 1.8rem);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+    z-index: 1000;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
-  @media (min-width: 768px) { .cursor { display: block; } }
 
-  /* Nebula & Background */
-  .nebula {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.15;
-    pointer-events: none;
-    z-index: 0;
+  .message-active {
+    animation: slideDown 0.5s ease-out;
+    text-shadow: 0 0 10px var(--gold);
   }
 
-  /* Galaxy System */
+  @keyframes slideDown {
+    0% { opacity: 0; transform: translateY(-20px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  /* --- GALAXIA --- */
   .galaxy {
     position: fixed;
-    top: 55%; left: 50%; /* Bajamos un poco el centro para el título */
+    top: 60%;
+    left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 1;
-    width: 100%; height: 100%;
-    display: flex; justify-content: center; align-items: center;
+    width: 100%;
+    height: 100%;
   }
 
-  /* Orbit Logic */
   .flower-orbit {
     position: absolute;
+    top: 50%; left: 50%;
     animation: orbit linear infinite;
-    animation-play-state: running;
-    transition: animation-play-state 0.3s;
-  }
-
-  /* MEJORA CLAVE: Pausar al pasar el mouse */
-  .flower-orbit:hover {
-    animation-play-state: paused;
-    z-index: 100;
   }
 
   @keyframes orbit {
@@ -82,187 +80,140 @@
 
   .flower-wrap {
     position: absolute;
-    transform: translate(-50%, -50%);
-    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
-
-  /* Phrases / Tooltips */
-  .phrase {
-    position: absolute;
-    bottom: 120%;
-    left: 50%;
-    transform: translateX(-50%) scale(0);
-    background: rgba(0, 0, 0, 0.9);
-    color: var(--gold);
-    padding: 10px 20px;
-    border-radius: 20px;
-    border: 1px solid var(--gold);
-    font-size: 1.1rem;
-    white-space: nowrap;
-    opacity: 0;
+    cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
-    z-index: 200;
   }
 
-  .flower-wrap:hover .phrase {
-    opacity: 1;
-    transform: translateX(-50%) scale(1);
-  }
-
-  .flower-wrap:hover .flower-svg {
-    transform: scale(1.5) rotate(0deg);
-    filter: drop-shadow(0 0 20px var(--gold));
-  }
-
-  /* Title Responsive */
-  .title-wrap {
-    position: fixed;
-    top: 5vh; left: 0; right: 0;
-    text-align: center;
-    z-index: 50;
+  /* --- EFECTO EXPLOSIÓN --- */
+  .exploding {
+    animation: explode 0.5s forwards;
     pointer-events: none;
   }
 
-  .title-main {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(1.8rem, 6vw, 3.5rem);
-    color: var(--gold);
-    text-shadow: 0 0 20px rgba(255,215,0,0.5);
+  @keyframes explode {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(2); filter: brightness(2); opacity: 0.5; }
+    100% { transform: scale(0); opacity: 0; }
   }
 
-  .footer-msg {
+  .particle {
     position: fixed;
-    bottom: 3vh; width: 100%;
-    text-align: center;
-    color: rgba(255,215,0,0.7);
-    font-size: clamp(0.9rem, 3vw, 1.2rem);
-  }
-
-  /* Center Flower */
-  .center-sun {
-    position: absolute;
-    z-index: 10;
-    filter: drop-shadow(0 0 30px var(--amber));
-  }
-
-  /* Sparkles */
-  .sparkle {
-    position: fixed;
-    pointer-events: none;
-    background: white;
+    width: 8px; height: 8px;
+    background: var(--gold);
     border-radius: 50%;
-    animation: moveSparkle 1s linear forwards;
+    pointer-events: none;
+    z-index: 500;
   }
 
-  @keyframes moveSparkle {
-    to { transform: translate(var(--x), var(--y)); opacity: 0; }
+  .counter {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    font-size: 1.2rem;
+    opacity: 0.7;
   }
+
 </style>
   </head>
   <body>
 
-    <div class="cursor" id="cursor"></div>
-    <div class="nebula"
-      style="width:80vw; height:80vw; background:radial-gradient(circle,#502a00,transparent); top:-10%; left:-10%;"></div>
-
-    <div class="title-wrap">
-      <h1 class="title-main">Mi Galaxia Personal</h1>
-      <p style="color: var(--gold); opacity: 0.8;">Para el sol que ilumina mi
-        vida 🌻</p>
-    </div>
-
+    <div id="message-board">Toca una flor para revelar un secreto... 🌻</div>
     <div class="galaxy" id="galaxy"></div>
-    <div class="footer-msg">✨ Toca o pasa el cursor sobre las flores ✨</div>
+    <div class="counter" id="counter">Flores restantes: 0</div>
 
     <script>
 const galaxy = document.getElementById('galaxy');
+const board = document.getElementById('message-board');
+const counterEl = document.getElementById('counter');
+
 const phrases = [
   "Eres mi sol cada mañana ☀️", "Mi corazón late por ti 💛", 
   "Eres lo más bonito de mi vida 🌻", "Contigo todo tiene color 🎨",
   "Me enamoro de ti cada día 💫", "Tú eres mi galaxia entera 🌌",
-  "Tu sonrisa me ilumina 🌈", "Eres mi mayor alegría 😊"
+  "Tu sonrisa me ilumina 🌈", "Eres mi mayor alegría 😊",
+  "A tu lado el mundo es mejor 🌍", "Eres mi sueño hecho realidad ✨",
+  "Gracias por existir, amor 💖", "Eres mi lugar favorito en el mundo 🏠",
+  "Tu amor es mi motor 🚀", "Eres la flor más bella del jardín 🌸",
+  "Sin ti nada sería igual 💍", "Te amo hasta el infinito 🚀🌌"
 ];
 
-// Generador de Girasoles SVG (Simplificado para rendimiento)
-function createSunflower(size) {
-  return `
-    <svg width="${size}" height="${size}" viewBox="0 0 100 100" class="flower-svg" style="transition: all 0.3s">
-      <defs>
-        <radialGradient id="gradPital">
-          <stop offset="0%" stop-color="#FFD700" />
-          <stop offset="100%" stop-color="#FFA500" />
-        </radialGradient>
-      </defs>
-      ${Array.from({length: 12}, (_, i) => `
-        <ellipse cx="50" cy="25" rx="10" ry="25" fill="url(#gradPital)" transform="rotate(${i*30} 50 50)" />
-      `).join('')}
-      <circle cx="50" cy="50" r="15" fill="#4B2C20" />
-    </svg>
-  `;
+let remaining = phrases.length;
+counterEl.innerText = `Flores restantes: ${remaining}`;
+
+function createFlowerSVG(size) {
+  return `<svg width="${size}" height="${size}" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="15" fill="#4B2C20" />
+    ${Array.from({length: 10}, (_, i) => `
+      <ellipse cx="50" cy="20" rx="10" ry="20" fill="#FFD700" transform="rotate(${i*36} 50 50)" />
+    `).join('')}
+  </svg>`;
 }
 
-// Centro de la Galaxia
-const center = document.createElement('div');
-center.className = 'center-sun';
-center.innerHTML = createSunflower(100);
-galaxy.appendChild(center);
-
-// Órbitas Responsivas (Usamos VW para que se ajuste al ancho)
-const orbitConfigs = [
-  { radius: 15, count: 3, speed: 20 },
-  { radius: 28, count: 5, speed: 35 }
+// Configuración de órbitas responsivas
+const config = [
+  { r: 15, count: 4, speed: 25 },
+  { r: 30, count: 6, speed: 40 },
+  { r: 45, count: 6, speed: 55 }
 ];
 
-orbitConfigs.forEach(conf => {
-  const orbitContainer = document.createElement('div');
-  orbitContainer.className = 'flower-orbit';
-  orbitContainer.style.width = orbitContainer.style.height = '0px';
-  orbitContainer.style.animationDuration = `${conf.speed}s`;
+config.forEach(orb => {
+  const container = document.createElement('div');
+  container.className = 'flower-orbit';
+  container.style.animationDuration = orb.speed + 's';
   
-  for (let i = 0; i < conf.count; i++) {
-    const angle = (i / conf.count) * (Math.PI * 2);
+  for(let i=0; i<orb.count; i++) {
+    const angle = (i / orb.count) * (Math.PI * 2);
     const wrap = document.createElement('div');
     wrap.className = 'flower-wrap';
     
-    // Posicionamiento usando VW para responsividad
-    const x = Math.cos(angle) * conf.radius;
-    const y = Math.sin(angle) * conf.radius;
-    wrap.style.left = `${x}vw`;
-    wrap.style.top = `${y}vw`;
+    // Posición dinámica usando VW para que sea responsivo
+    wrap.style.left = (Math.cos(angle) * orb.r) + 'vw';
+    wrap.style.top = (Math.sin(angle) * orb.r) + 'vw';
     
-    const phrase = phrases[Math.floor(Math.random() * phrases.length)];
-    wrap.innerHTML = `
-      ${createSunflower(50 + Math.random() * 20)}
-      <div class="phrase">${phrase}</div>
-    `;
+    wrap.innerHTML = createFlowerSVG(40 + Math.random()*20);
     
-    orbitContainer.appendChild(wrap);
+    wrap.onclick = (e) => {
+      if(wrap.classList.contains('exploding')) return;
+      
+      // 1. Mostrar mensaje arriba
+      const msg = phrases.pop() || "¡Me quedé sin palabras de tanto amarte! 💛";
+      board.innerHTML = `<span class="message-active">${msg}</span>`;
+      board.style.borderColor = "#FFF";
+      setTimeout(() => board.style.borderColor = "var(--gold)", 500);
+
+      // 2. Efecto explosión
+      wrap.classList.add('exploding');
+      createParticles(e.clientX, e.clientY);
+      
+      // 3. Actualizar contador
+      remaining = Math.max(0, remaining - 1);
+      counterEl.innerText = `Flores restantes: ${remaining}`;
+      if(remaining === 0) board.innerHTML = "¡Has recolectado todo mi amor! 🌻👑";
+    };
+    
+    container.appendChild(wrap);
   }
-  galaxy.appendChild(orbitContainer);
+  galaxy.appendChild(container);
 });
 
-// Partículas de rastro
-document.addEventListener('mousemove', (e) => {
-  if (window.innerWidth < 768) return;
-  const c = document.getElementById('cursor');
-  c.style.left = e.clientX + 'px';
-  c.style.top = e.clientY + 'px';
-  
-  if (Math.random() > 0.8) {
-    const s = document.createElement('div');
-    s.className = 'sparkle';
-    const size = Math.random() * 4 + 2;
-    s.style.width = s.style.height = size + 'px';
-    s.style.left = e.clientX + 'px';
-    s.style.top = e.clientY + 'px';
-    s.style.setProperty('--x', (Math.random() - 0.5) * 50 + 'px');
-    s.style.setProperty('--y', (Math.random() - 0.5) * 50 + 'px');
-    document.body.appendChild(s);
-    setTimeout(() => s.remove(), 1000);
+function createParticles(x, y) {
+  for(let i=0; i<15; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = x + 'px';
+    p.style.top = y + 'px';
+    const destX = (Math.random() - 0.5) * 200;
+    const destY = (Math.random() - 0.5) * 200;
+    
+    p.animate([
+      { transform: 'translate(0, 0) scale(1)', opacity: 1 },
+      { transform: `translate(${destX}px, ${destY}px) scale(0)`, opacity: 0 }
+    ], { duration: 1000, easing: 'ease-out' });
+    
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 1000);
   }
-});
+}
 </script>
   </body>
 </html>
-<!-- vercel -->
